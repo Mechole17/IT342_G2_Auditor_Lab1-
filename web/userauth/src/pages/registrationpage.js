@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import axios from "axios";
 
 export default function RegistrationPage() {
@@ -58,6 +59,9 @@ export default function RegistrationPage() {
 
           <button type="submit" style={styles.button}>Register</button>
         </form>
+        <p style={{ marginTop: "20px", fontSize: "14px", textAlign: "center", color: "#666" }}>
+            Already have an account? <Link to="/" style={{ color: "#000", fontWeight: "600", textDecoration: "none" }}>Login</Link>
+        </p>
       </div>
     </div>
   );
