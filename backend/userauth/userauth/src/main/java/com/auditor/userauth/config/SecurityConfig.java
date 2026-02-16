@@ -34,7 +34,8 @@ public class SecurityConfig {
                 // The jwtFilter uses the TokenProvider to scan the keys!
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/user/auth/**").permitAll() // Open door
+                        .requestMatchers("/api/auth/**").permitAll() // Open door
+                        .requestMatchers("/api/user/auth/me").authenticated()
                         .anyRequest().authenticated()               // Locked door
                 );
 

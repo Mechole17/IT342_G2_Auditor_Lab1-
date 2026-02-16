@@ -1,5 +1,6 @@
 package com.auditor.userauth.security;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Component;
@@ -18,9 +19,10 @@ public class TokenProvider {
     private final SecretKey SECRET_KEY = Keys.hmacShaKeyFor(SECRET_STRING.getBytes(StandardCharsets.UTF_8));
 
     // 3. Create Token (Used in Login)
-    public String createToken(Long userId) {
+    public String createToken(Long userId, String email) {
         return Jwts.builder()
                 .subject(String.valueOf(userId))
+                .claim("email", email)
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + 86400000)) // 24 Hours
                 .signWith(SECRET_KEY) // No need to specify algorithm, it's inferred
@@ -51,5 +53,16 @@ public class TokenProvider {
                 .getSubject();
 
         return Long.parseLong(subject);
+    }
+
+    public String getEmailFromToken(String token) {
+        String claim = Jwts.parser()
+                .verifyWith(SECRET_KEY)
+                .build()
+                .parseSignedClaims(token)
+                .getPayload()
+                .get("email", String.class); // Still use .get() for custom claims
+
+        return claim;
     }
 }

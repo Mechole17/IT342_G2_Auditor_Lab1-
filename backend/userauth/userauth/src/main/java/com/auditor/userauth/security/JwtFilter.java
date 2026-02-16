@@ -28,16 +28,20 @@ public class JwtFilter extends OncePerRequestFilter {
         // 1. Look for the "Authorization" header
         String authHeader = request.getHeader("Authorization");
 
-        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+        if (authHeader != null && authHeader.startsWith("Bearer ") && SecurityContextHolder.getContext().getAuthentication() == null) {
             String token = authHeader.substring(7);
 
             // 2. Use your TokenProvider tool to verify it
             if (tokenProvider.validateToken(token)) {
-                Long userId = tokenProvider.getUserIdFromToken(token);
+                // Get the email claim we added to the token
+                String email = tokenProvider.getEmailFromToken(token);
 
-                // 3. Log the user into Spring's internal "Security Room"
+                // 3. Log the user in using the EMAIL as the principal
                 UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
-                        userId, null, Collections.emptyList());
+                        email, // Using email instead of userId here
+                        null,
+                        Collections.emptyList()
+                );
 
                 SecurityContextHolder.getContext().setAuthentication(auth);
             }

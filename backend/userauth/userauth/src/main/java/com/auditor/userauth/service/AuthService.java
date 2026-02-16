@@ -3,6 +3,7 @@ package com.auditor.userauth.service;
 import com.auditor.userauth.dto.LoginRequestDTO;
 import com.auditor.userauth.dto.LoginResponseDTO;
 import com.auditor.userauth.dto.RegistrationRequestDTO;
+import com.auditor.userauth.dto.UserDetailsDTO;
 import com.auditor.userauth.entity.User;
 import com.auditor.userauth.repository.UserRepository;
 import com.auditor.userauth.security.TokenProvider;
@@ -51,9 +52,20 @@ public class AuthService {
         }
 
         // 3. Generate the token using the User ID
-        String token = tokenProvider.createToken(user.getUserid());
+        String token = tokenProvider.createToken(user.getUserid(),user.getEmail());
 
         // 4. Return the response DTO
-        return new LoginResponseDTO(token,user.getFirstname(), user.getLastname(), user.getEmail());
+        return new LoginResponseDTO(token, user.getEmail());
+    }
+
+    public UserDetailsDTO getUserDetails(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        return new UserDetailsDTO(
+                user.getFirstname(),
+                user.getLastname(),
+                user.getEmail()
+        );
     }
 }
