@@ -1,4 +1,4 @@
-package com.auditor.userauth;
+package com.auditor.userauth.handler;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
